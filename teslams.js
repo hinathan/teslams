@@ -229,7 +229,26 @@ function get_vehicle_state( vid, cb ) {
         }
     });
 }
-exports.get_vehicle_state = get_vehicle_state;
+exports.get_vehicle_state = get_vehicle_data;
+
+function get_vehicle_data( vid, cb ) {
+    request( {
+        method: 'GET',
+        url: portal + '/vehicles/' + vid + '/vehicle_data',
+        gzip: true,
+        headers: http_header
+    }, function (error, response, body) { 
+        if ((!!error) || (response.statusCode !== 200)) return report(error, response, body, cb);
+        try {
+            var data = JSON.parse(body); 
+            if (typeof cb == 'function') return cb( data.response );  
+            else return true;
+        } catch (err) {
+            return report2('vehicle_state', body, cb);
+        }
+    });
+}
+exports.get_vehicle_data = get_vehicle_data;
 
 function get_gui_settings( vid, cb ) {
     request( { 
